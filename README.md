@@ -10,11 +10,14 @@ To build the image, run the following command:
 ``` bash 
 docker build -t wordpress-and-mysql .
 ```
-[Prebuild image wordpress-and-mysql is available at docker hub](https://hub.docker.com/repository/docker/rnawaz02/wordpress-and-mysql/general)
 To run the image, run the following command:
 ``` bash 
 docker run -d -p 80:80 -p 3306:3306 --name wordpress-and-mysql wordpress-and-mysql
 ```  
+[Prebuild image wordpress-and-mysql is available at docker hub](https://hub.docker.com/repository/docker/rnawaz02/wordpress-and-mysql/general). You can directly pull the image from docker hub and run the image using the following command:
+``` bash
+ docker run -d -p 80:80 -p 3306:3306 --name rnawaz02/wordpress-and-mysql docker pull rnawaz02/wordpress-and-mysql
+ ```
 This will start the mariadb database, the apache2 web server, and the phpmyadmin interface. You can then access the wordpress installation by going to http://localhost/ and the phpmyadmin interface by going to http://localhost/phpmyadmin.
 
 ## Configuration
