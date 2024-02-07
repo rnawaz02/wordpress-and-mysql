@@ -37,11 +37,15 @@ RUN { \
             curl https://wordpress.org/latest.tar.gz | tar zx -C /srv/backup; \
             mkdir -p /srv/www/wordpress; \
             cp -rf /etc/apache2 /srv/backup; \
-        }
+        } \
+    && cp -rf /etc/phpmyadmin /srv/backup
 WORKDIR /srv/www/wordpress
 RUN echo '#!/bin/bash \n\
     set -eo pipefail \n\
     shopt -s nullglob \n\ 
+    if [ ! -f "/etc/phpmyadmin/apache.conf" ]; then \n\
+        cp -rf /srv/backup/phpmyadmin /etc \n\
+    fi \n\
     if [ ! -f "/srv/backup/apache2/sites-available/wordpress.conf" ]; then \n\
         mkdir -p /srv/backup/apache2/sites-available \n\
         echo "<VirtualHost *:80> \n\         
@@ -103,7 +107,6 @@ ENV MARIADB_ROOT_PASSWORD=Welcome1
 VOLUME /srv/www/wordpress
 VOLUME /etc/apache2/ssl
 VOLUME /etc/apache2/sites-available
-###
 VOLUME /etc/phpmyadmin
 #VOLUME /var/lib/mysql #From base image
 
