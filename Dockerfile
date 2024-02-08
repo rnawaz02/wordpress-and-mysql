@@ -28,15 +28,10 @@ RUN apt-get update && apt-get install apache2 \
         } | debconf-set-selections \
     && dpkg-reconfigure -f noninteractive phpmyadmin \
     && echo "Include /etc/phpmyadmin/apache.conf" >> /etc/apache2/apache2.conf \
-    #&& { \
-    #        mkdir -p /backup; \
-    #        cp -rf /etc/phpmyadmin /backup; \
-    #    } \
     && { \
             mkdir -p /backup; \
             curl https://en-ca.wordpress.org/wordpress-6.4.3-en_CA.tar.gz | tar zx -C /backup; \
         } \
-    #&& cd /srv/wordpress \
     && echo '#!/bin/bash \n\
         set -eo pipefail \n\
         shopt -s nullglob \n\ 
@@ -86,8 +81,9 @@ RUN apt-get update && apt-get install apache2 \
         rm -rf /etc/phpmyadmin \n\
         cp -rf /srv/phpmyadmin /etc \n\
         a2ensite wordpress \n\
-        /usr/sbin/apache2ctl start \n\
-        /usr/local/bin/docker-entrypoint.sh $1 ' > /usr/local/bin/mariadb-wp-entrywrapper.sh \
+        /usr/local/bin/docker-entrypoint.sh $1 & \n\
+        /usr/sbin/apache2ctl -D FOREGROUND \n\ 
+        ' > /usr/local/bin/mariadb-wp-entrywrapper.sh \
     && chmod +x /usr/local/bin/mariadb-wp-entrywrapper.sh \
     && a2enmod rewrite \
     && a2enmod ssl \
