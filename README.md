@@ -30,8 +30,15 @@ The following environment variables can be used to configure the image: Default 
 The follwoing command can be used to set the environment variables, volumes and ports: Please modify the path according to your local path.
 
 ``` bash
-docker run -p 80:80 -p 443:443 -p 3306:3306 -e MARIADB_DATABASE=db -e MARIADB_USER=user -e MARIADB_PASSWORD=Welcome1 -e MARIADB_ROOT_PASSWORD=Welcome1 -v C:\sandbox\code\apache2:/etc/apache2/sites-available -v C:\sandbox\code\ssl:/etc/apache2/ssl  -v C:\sandbox\code\wp:/srv/www/wordpress -v C:\sandbox\code\db:/var/lib/mysql -v C:\sandbox\code\ssl:/etc/apache2/ssl -v C:\sandbox\code\phpmyadmin:/etc/phpmyadmin rnawaz02/wordpress-and-mysql
+docker run -p 80:80 -p 443:443 -p 3306:3306 -e MARIADB_DATABASE=db -e MARIADB_USER=user -e MARIADB_PASSWORD=Welcome1 -e MARIADB_ROOT_PASSWORD=Welcome1 -v C:\sandbox\code\datadir:/srv -v C:\sandbox\code\db:/var/lib/mysql rnawaz02/wordpress-and-mysql:0.2
 ```
+We can mount two volumes. 
+
+* /var/lib/mysql to store the mariadb database
+* /srv to store the wordpress installation, phpmyadmin configuration and wordpress configurations.
+
+Files will be created if mounts are empty otherwise existing files will be used by the container.
+
 Troubleshooting
 If you encounter any problems with the image, please refer to the following resources:
 
