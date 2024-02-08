@@ -28,11 +28,12 @@ RUN apt-get update && apt-get install apache2 \
         } | debconf-set-selections \
     && dpkg-reconfigure -f noninteractive phpmyadmin \
     && echo "Include /etc/phpmyadmin/apache.conf" >> /etc/apache2/apache2.conf \
+    #&& { \
+    #        mkdir -p /backup; \
+    #        cp -rf /etc/phpmyadmin /backup; \
+    #    } \
     && { \
             mkdir -p /backup; \
-            cp -rf /etc/phpmyadmin /backup; \
-        } \
-    && { \
             curl https://en-ca.wordpress.org/wordpress-6.4.3-en_CA.tar.gz | tar zx -C /backup; \
         } \
     #&& cd /srv/wordpress \
@@ -40,7 +41,7 @@ RUN apt-get update && apt-get install apache2 \
         set -eo pipefail \n\
         shopt -s nullglob \n\ 
         if [ ! -f "/srv/phpmyadmin/apache.conf" ]; then \n\
-            cp -rf /backup/phpmyadmin /srv \n\
+            cp -rf /etc/phpmyadmin /srv \n\
         fi \n\
         if [ ! -f "/srv/wp-config/wordpress.conf" ]; then \n\
             mkdir -p /srv/wp-config \n\
