@@ -16,6 +16,9 @@ RUN apt-get update && apt-get install apache2 \
     php-mysql \
     php-xml \
     curl \
+    certbot \
+    python3-certbot-apache \
+    #cron \
     php-zip \
     phpmyadmin -yq \
     && apt-get clean \
@@ -40,15 +43,18 @@ RUN apt-get update && apt-get install apache2 \
         fi \n\
         if [ ! -f "/srv/wp-config/wordpress.conf" ]; then \n\
             mkdir -p /srv/wp-config \n\
-            echo "<VirtualHost *:80> \n\         
+            echo " <VirtualHost *:80> \n\
+                ServerName ${HOSTNAME} \n\
+                ServerAlias www.${HOSTNAME} \n\
                 RewriteEngine On \n\
-                #RewriteRule ^(.*)$ https://%{HTTP_HOST} [R=301,L] \n\
                 RewriteCond %{HTTPS} off \n\
                 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301] \n\
                 RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC] \n\
                 RewriteRule ^ https://%1%{REQUEST_URI} [R=301,L] \n\
             </VirtualHost> \n\
             <VirtualHost *:443> \n\
+                ServerName ${HOSTNAME} \n\
+                ServerAlias www.${HOSTNAME} \n\
                 Protocols h2 http/1.1 \n\
                 SSLEngine on \n\
                 SSLCertificateFile /srv/ssl/cert.pem \n\
@@ -67,7 +73,7 @@ RUN apt-get update && apt-get install apache2 \
             </VirtualHost> "  >> /srv/wp-config/wordpress.conf \n\
         fi \n\
         if [ -f "/srv/wp-config/wordpress.conf" ]; then \n\
-            cp -f /srv/wp-config/wordpress.conf /etc/apache2/sites-available/wordpress.conf \n\
+            cp -f /srv/wp-config/wordpress.conf /etc/apache2/sites-available/${HOSTNAME}.conf \n\
         fi \n\
         if [ ! -f "/srv/ssl/cert.pem" ]; then \n\
             mkdir -p /srv/ssl \n\
@@ -80,8 +86,9 @@ RUN apt-get update && apt-get install apache2 \
         fi \n\
         rm -rf /etc/phpmyadmin \n\
         cp -rf /srv/phpmyadmin /etc \n\
-        a2ensite wordpress \n\
+        a2ensite ${HOSTNAME} \n\
         /usr/local/bin/docker-entrypoint.sh $1 & \n\
+        #service cron start \n\
         /usr/sbin/apache2ctl -D FOREGROUND \n\ 
         ' > /usr/local/bin/mariadb-wp-entrywrapper.sh \
     && chmod +x /usr/local/bin/mariadb-wp-entrywrapper.sh \
@@ -97,6 +104,8 @@ ENV MARIADB_DATABASE=db
 ENV MARIADB_USER=user
 ENV MARIADB_PASSWORD=Welcome1
 ENV MARIADB_ROOT_PASSWORD=Welcome1
+ENV HOSTNAME=localhost
+#ENV MULTI_HOSTNAME=
 
 VOLUME /var/lib/mysql
 VOLUME /srv
