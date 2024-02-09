@@ -18,7 +18,6 @@ RUN apt-get update && apt-get install apache2 \
     curl \
     certbot \
     python3-certbot-apache \
-    #cron \
     php-zip \
     phpmyadmin -yq \
     && apt-get clean \
@@ -38,10 +37,7 @@ RUN apt-get update && apt-get install apache2 \
     && echo '#!/bin/bash \n\
         set -eo pipefail \n\
         shopt -s nullglob \n\ 
-        if [ ! -f "/srv/phpmyadmin/apache.conf" ]; then \n\
-            cp -rf /etc/phpmyadmin /srv \n\
-        fi \n\
-        if [ ! -f "/srv/wp-config/wordpress.conf" ]; then \n\
+       if [ ! -f "/srv/wp-config/wordpress.conf" ]; then \n\
             mkdir -p /srv/wp-config \n\
             echo " <VirtualHost *:80> \n\
                 ServerName ${HOSTNAME} \n\
@@ -84,11 +80,20 @@ RUN apt-get update && apt-get install apache2 \
             cp -rf /backup/wordpress /srv \n\
             chown -R www-data:www-data /srv \n\   
         fi \n\
-        rm -rf /etc/phpmyadmin \n\
-        cp -rf /srv/phpmyadmin /etc \n\
+        if [ ! -f "/srv/phpmyadmin/apache.conf" ]; then \n\
+            cp -rf /etc/phpmyadmin /srv \n\
+        else \n\
+            rm -rf /etc/phpmyadmin \n\
+            cp -rf /srv/phpmyadmin /etc \n\
+        fi \n\
         a2ensite ${HOSTNAME} \n\
+        if [ ! -f "/srv/mysql/my.cnf" ]; then \n\
+            cp -rf /etc/mysql /srv \n\
+        else \n\
+            rm -rf /etc/mysql \n\
+            cp -rf /srv/mysql /etc \n\
+        fi \n\
         /usr/local/bin/docker-entrypoint.sh $1 & \n\
-        #service cron start \n\
         /usr/sbin/apache2ctl -D FOREGROUND \n\ 
         ' > /usr/local/bin/mariadb-wp-entrywrapper.sh \
     && chmod +x /usr/local/bin/mariadb-wp-entrywrapper.sh \

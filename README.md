@@ -18,7 +18,7 @@ To run the image, run the following command:
 ``` bash 
 docker run -d -p 80:80 -p 3306:3306 --name wordpress-and-mysql wordpress-and-mysql
 ```  
-[Prebuild image wordpress-and-mysql is available at docker hub](https://hub.docker.com/repository/docker/rnawaz02/wordpress-and-mysql/general). You can directly pull the image from docker hub and run the image using the following command:
+[Prebuild image wordpress-and-mysql is available at docker hub](https://hub.docker.com/repository/docker/rnawaz02/wordpress-and-mysql). You can directly pull the image from docker hub and run the image using the following command:
 
 ``` bash
  docker run -d -p 80:80 -p 3306:3306 --name rnawaz02/wordpress-and-mysql docker pull rnawaz02/wordpress-and-mysql
@@ -42,7 +42,7 @@ docker run -p 80:80 -p 443:443 -p 3306:3306 -e MARIADB_DATABASE=db -e MARIADB_US
 We can mount two volumes. 
 
 * /var/lib/mysql to store the mariadb database
-* /srv to store the wordpress installation, phpmyadmin configuration and wordpress configurations.
+* /srv to store the wordpress installation, phpmyadmin, mysql configuration and wordpress configurations. Configuration files are created if not present and existing files are used otherwise.
 
 Files will be created if mounts are empty otherwise existing files will be used by the container.
 
